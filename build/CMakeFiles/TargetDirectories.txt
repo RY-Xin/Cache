@@ -1,0 +1,4 @@
+/Users/xinhuiyu/Desktop/Cache/build/CMakeFiles/main.dir
+/Users/xinhuiyu/Desktop/Cache/build/CMakeFiles/testAllCachePolicy.dir
+/Users/xinhuiyu/Desktop/Cache/build/CMakeFiles/edit_cache.dir
+/Users/xinhuiyu/Desktop/Cache/build/CMakeFiles/rebuild_cache.dir
