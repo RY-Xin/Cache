@@ -1,54 +1,121 @@
-# KamaCache
+# Cache System (C++17, CMake, Benchmark Project)
 
-> ⭐️ 本项目为[【代码随想录知识星球】](https://programmercarl.com/other/kstar.html) 教学项目   
-> ⭐️ 在 [缓存项目文档](https://www.programmercarl.com/other/project_huancun.html)  里详细讲解：**项目前置知识 + 项目细节 +  代码解读 + 项目难点 + 面试题与回答 + 简历写法  + 项目拓展**。 全面帮助你用这个项目求职面试！
+> This project is a **reproduction and extension** of the open-source *KamaCache*.  
+> It adds an independent **CMake build system**, **benchmark analysis**, and **clean English documentation** for clarity and research purposes.
 
+---
 
-## 项目介绍
-本项目使用多个页面替换策略实现一个线程安全的缓存：
-- LRU：最近最久未使用
-- LFU：最近不经常使用
-- ARC：自适应替换
+## Project Overview
 
-对于LRU和LFU策略，我在其基础的缓存策略上进行了相应的优化，例如：
+This project implements a thread-safe cache system using multiple page replacement strategies, including:
 
-- LRU优化：
-    - LRU分片：对多线程下的高并发访问有性能上的优化
-    - LRU-k：一定程度上防止热点数据被冷数据挤出容器而造成缓存污染等问题
+- **LRU (Least Recently Used)** – removes the least recently accessed entries.  
+- **LFU (Least Frequently Used)** – removes the least frequently accessed entries.  
+- **ARC (Adaptive Replacement Cache)** – dynamically balances between recency and frequency.  
 
-- LFU优化：
-    - LFU分片：对多线程下的高并发访问有性能上的优化
-    - 引入最大平均访问频次：解决过去的热点数据最近一直没被访问，却仍占用缓存等问题
+Additionally, several optimizations are applied to enhance performance and cache hit rate for LRU and LFU variants.
 
-## 系统环境 
-```
-Ubuntu 22.04 LTS
-```
-## 编译
-创建一个build文件夹并进入
-```
+---
+
+## Optimization Highlights
+
+### LRU Optimizations
+- **LRU Sharding** – improves performance in multi-threaded and high-concurrency scenarios.  
+- **LRU-K** – prevents cache pollution by avoiding eviction of frequently accessed “hot” data due to recent “cold” data bursts.
+
+### LFU Optimizations
+- **LFU Sharding** – parallelized LFU segments to reduce contention under concurrent access.  
+- **LFU-Aging** – introduces frequency decay over time to prevent stale hot data from occupying cache indefinitely.
+
+---
+
+## Benchmark Results
+
+This project benchmarks all cache strategies under three simulated access patterns:  
+**Hotspot**, **Cyclic Scan**, and **Dynamic Workload**.
+
+| Test Scenario | LRU | LFU | ARC | LRU-K | LFU-Aging |
+|----------------|------|------|------|--------|------------|
+| **Hot Data Access** | 49.6% | 66.8% | 65.7% | 55.0% | 66.9% |
+| **Cyclic Scan** | 4.6% | 8.9% | 9.7% | 4.8% | 8.9% |
+| **Dynamic Workload** | 55.1% | 37.4% | 58.8% | 54.5% | 37.7% |
+
+**Observations**
+- **ARC** delivers the most balanced performance, adapting well to changing workloads.  
+- **LFU** achieves the highest hit rate in stable hot data scenarios.  
+- **LRU-K** provides more stable hit rates in fluctuating workloads.
+
+---
+
+## Build & Run
+
+### Build the project
+```bash
 mkdir build && cd build
-```
-生成构建文件
-```
 cmake ..
-```
-构建项目
-```
 make
+````
+
+### Run benchmark tests
+
+```bash
+./testAllCachePolicy
 ```
-如果要清理生成的可执行文件
-```
+
+### Clean build artifacts
+
+```bash
 make clean
 ```
 
-## 运行
+---
+
+## Project Structure
+
 ```
-./main
+Cache/
+├── KArcCache/              # ARC algorithm implementation
+├── KICachePolicy.h         # Common cache interface
+├── KLfuCache.h             # LFU and LFU-Aging implementations
+├── KLruCache.h             # LRU and LRU-K implementations
+├── testAllCachePolicy.cpp  # Benchmark test runner
+├── CMakeLists.txt          # Build configuration
+└── README.md               # Documentation (this file)
 ```
 
-## 测试结果
-不同缓存策略缓存命中率测试对比结果如下：
-（ps: 该测试代码只是尽可能地模拟真实的访问场景，但是跟真实的场景仍存在一定差距，测试结果仅供参考。）
+---
 
-![alt text](images/hitTest.jpg)
+## Learning & Takeaways
+
+Through this project, I:
+
+* Implemented five cache replacement algorithms using **C++17 STL containers**
+* Built a modular **CMake-based build system**
+* Designed a benchmarking framework to test hit rates across workloads
+* Compared algorithm performance and analyzed trade-offs between recency and frequency
+
+---
+
+## Future Improvements
+
+* Add **thread-safe cache** with mutex locks or atomic operations
+* Implement **TTL (Time-To-Live)** and expiration policies
+* Visualize results using **Python/Matplotlib**
+* Integrate **real-world access traces** for further analysis
+
+---
+
+## Author
+
+**Remi (Xinhui Yu)**
+Graduate Student @ Stevens Institute of Technology
+[GitHub Profile](https://github.com/RemiYu)
+
+---
+
+## License
+
+MIT License © 2025 Remi Yu
+Based on the open-source *KamaCache* project for educational and benchmarking purposes.
+
+````
